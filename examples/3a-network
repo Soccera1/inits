@@ -1,0 +1,36 @@
+#!/bin/sh
+# 3a-network - Network initialization
+# Licensed under GNU GPL 3.0
+#
+# This service initializes network interfaces in runlevel 3.
+# It should run before services that depend on networking.
+
+echo "Initializing network at runlevel $RUNLEVEL"
+
+# Bring up loopback interface
+if command -v ifconfig > /dev/null; then
+    ifconfig lo up
+    echo "Loopback interface configured"
+elif command -v ip > /dev/null; then
+    ip link set lo up
+    echo "Loopback interface configured"
+else
+    echo "Warning: Neither ifconfig nor ip command found"
+    exit 1
+fi
+
+# Bring up primary network interface (adjust interface name as needed)
+# This is a simplified example - real systems would use DHCP or static config
+INTERFACE="eth0"
+
+if command -v ip > /dev/null; then
+    if ip link show "$INTERFACE" > /dev/null 2>&1; then
+        ip link set "$INTERFACE" up
+        echo "Network interface $INTERFACE brought up"
+    else
+        echo "Warning: Interface $INTERFACE not found"
+    fi
+fi
+
+echo "Network initialization complete"
+exit 0

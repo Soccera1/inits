@@ -1,0 +1,29 @@
+#!/bin/sh
+# 6a-reboot - Reboot preparation
+# Licensed under GNU GPL 3.0
+#
+# This service runs in runlevel 6 (reboot).
+# It prepares the system for reboot by stopping services gracefully.
+
+echo "Preparing system for reboot at runlevel $RUNLEVEL"
+
+# Stop web server
+if pgrep -x httpd > /dev/null; then
+    echo "Stopping web server..."
+    pkill -TERM httpd
+    sleep 2
+fi
+
+# Stop database server
+if pgrep -x postgres > /dev/null; then
+    echo "Stopping database server..."
+    su - postgres -c "pg_ctl stop -D /var/lib/postgresql/data -m fast"
+    sleep 2
+fi
+
+# Sync filesystems
+echo "Syncing filesystems..."
+sync
+
+echo "System ready for reboot"
+exit 0
