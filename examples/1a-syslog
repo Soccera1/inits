@@ -1,0 +1,25 @@
+#!/bin/sh
+# 1a-syslog - System logging daemon
+# Licensed under GNU GPL 3.0
+#
+# This service starts the system logging daemon in runlevel 1.
+# It should be one of the first services to start so other services
+# can log their activities.
+
+echo "Starting system logging daemon at runlevel $RUNLEVEL"
+
+# Check if syslogd is already running
+if pgrep -x syslogd > /dev/null; then
+    echo "syslogd is already running"
+    exit 0
+fi
+
+# Start syslogd (adjust path as needed for your system)
+if command -v syslogd > /dev/null; then
+    syslogd
+    echo "syslogd started successfully"
+    exit 0
+else
+    echo "Warning: syslogd not found in PATH"
+    exit 1
+fi

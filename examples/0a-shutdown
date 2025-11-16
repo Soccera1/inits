@@ -1,0 +1,29 @@
+#!/bin/sh
+# 0a-shutdown - Shutdown services gracefully
+# Licensed under GNU GPL 3.0
+#
+# This service runs in runlevel 0 (shutdown/halt).
+# It stops services in reverse order before system halt.
+
+echo "Shutting down services at runlevel $RUNLEVEL"
+
+# Stop web server
+if pgrep -x httpd > /dev/null; then
+    echo "Stopping web server..."
+    pkill -TERM httpd
+    sleep 2
+fi
+
+# Stop database server
+if pgrep -x postgres > /dev/null; then
+    echo "Stopping database server..."
+    su - postgres -c "pg_ctl stop -D /var/lib/postgresql/data -m fast"
+    sleep 2
+fi
+
+# Sync filesystems
+echo "Syncing filesystems..."
+sync
+
+echo "Service shutdown complete"
+exit 0

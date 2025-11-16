@@ -1,0 +1,35 @@
+#!/bin/sh
+# 3c-webserver - Web server startup
+# Licensed under GNU GPL 3.0
+#
+# This service starts a web server in runlevel 3.
+# It runs after network (3a-network) and database (3b-database).
+
+echo "Starting web server at runlevel $RUNLEVEL"
+
+# Example for Apache httpd - adjust for your web server
+HTTPD_CONF="/etc/httpd/httpd.conf"
+HTTPD_BIN="httpd"
+
+# Check if web server is already running
+if pgrep -x "$HTTPD_BIN" > /dev/null; then
+    echo "Web server is already running"
+    exit 0
+fi
+
+# Check if configuration exists
+if [ ! -f "$HTTPD_CONF" ]; then
+    echo "Warning: Web server configuration $HTTPD_CONF not found"
+    exit 1
+fi
+
+# Start web server
+if command -v "$HTTPD_BIN" > /dev/null; then
+    "$HTTPD_BIN" -f "$HTTPD_CONF"
+    echo "Web server started successfully"
+    exit 0
+else
+    echo "Warning: $HTTPD_BIN not found in PATH"
+    echo "Adjust this script for your web server (nginx, apache, etc.)"
+    exit 1
+fi

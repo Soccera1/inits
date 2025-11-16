@@ -1,0 +1,33 @@
+#!/bin/sh
+# 3a1b-multirunlevel - Example multi-runlevel service
+# Licensed under GNU GPL 3.0
+#
+# This service demonstrates multi-runlevel functionality.
+# It runs in:
+#   - Runlevel 3 with ordering prefix 'a' (first)
+#   - Runlevel 1 with ordering prefix 'b' (second)
+#
+# This is useful for services needed in multiple runlevels
+# but with different execution order in each.
+
+echo "Multi-runlevel service executing at runlevel $RUNLEVEL"
+
+case "$RUNLEVEL" in
+    1)
+        echo "Running in single-user mode (runlevel 1)"
+        echo "Performing minimal initialization..."
+        # Minimal setup for single-user mode
+        ;;
+    3)
+        echo "Running in multi-user mode (runlevel 3)"
+        echo "Performing full initialization..."
+        # Full setup for multi-user mode
+        ;;
+    *)
+        echo "Unexpected runlevel: $RUNLEVEL"
+        exit 1
+        ;;
+esac
+
+echo "Multi-runlevel service completed successfully"
+exit 0

@@ -1,0 +1,35 @@
+#!/bin/sh
+# 3b-database - Database server startup
+# Licensed under GNU GPL 3.0
+#
+# This service starts a database server in runlevel 3.
+# It runs after network initialization (3a-network).
+
+echo "Starting database server at runlevel $RUNLEVEL"
+
+# Example for PostgreSQL - adjust for your database system
+DB_USER="postgres"
+DB_DATA_DIR="/var/lib/postgresql/data"
+
+# Check if database is already running
+if pgrep -x postgres > /dev/null; then
+    echo "Database server is already running"
+    exit 0
+fi
+
+# Check if data directory exists
+if [ ! -d "$DB_DATA_DIR" ]; then
+    echo "Warning: Database data directory $DB_DATA_DIR does not exist"
+    echo "Database initialization may be required"
+    exit 1
+fi
+
+# Start database server (example for PostgreSQL)
+if command -v pg_ctl > /dev/null; then
+    su - "$DB_USER" -c "pg_ctl start -D $DB_DATA_DIR -l /var/log/postgresql.log"
+    echo "Database server started successfully"
+    exit 0
+else
+    echo "Warning: pg_ctl not found - adjust this script for your database"
+    exit 1
+fi
