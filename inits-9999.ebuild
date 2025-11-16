@@ -21,7 +21,7 @@ DEPEND="
 RDEPEND="${DEPEND}"
 BDEPEND="
 	sys-devel/gcc
-	sys-devel/make
+	dev-build/make
 	test? ( sys-apps/coreutils )
 "
 
@@ -30,6 +30,7 @@ src_compile() {
 		CC="$(tc-getCC)"
 		CFLAGS="${CFLAGS}"
 		LDFLAGS="${LDFLAGS}"
+		PREFIX="${EPREFIX}/usr"
 	)
 	
 	# Add debug flags if requested
@@ -87,7 +88,7 @@ src_install() {
 	# Install main binary
 	dosbin inits
 
-	# Install wrapper scripts
+	# Install wrapper scripts (already generated with correct PREFIX during compile)
 	local i
 	for i in {0..9}; do
 		dosbin scripts/inits${i}
